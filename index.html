@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Eru's Cocktail Space</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- 獅尾四季春 via jsdelivr CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/max32002/swei-spring@2.112/WebFont/WebFont_Traditional_400.css">
+<style>
+:root{
+  /* 深霧咖啡色系 */
+  --bg:#1a1612;
+  --bg2:#1f1b16;
+  --surface:#252018;
+  --surface2:#2c2620;
+  --surface3:#332e27;
+  --border:#3a332a;
+  --border2:#443c32;
+
+  /* 金色系 accent */
+  --gold:#c8a96e;
+  --gold2:#dfc08a;
+  --gold-dim:rgba(200,169,110,0.15);
+
+  /* 家族色 */
+  --OF:#c8a96e; --MA:#7eb8a4; --DA:#e07a7a;
+  --SI:#b07ec8; --HI:#7eaac8; --FL:#c8b07e; --CU:#9a9288;
+
+  /* 文字 */
+  --text:#ede7dc;
+  --text2:#c8bfb2;
+  --muted:#7a7068;
+  --dim:#524a40;
+
+  --radius:8px;
+  --font-zh:'Swei Spring','Cormorant Garamond',serif;
+  --font-en:'Cormorant Garamond',serif;
+  --font-mono:'DM Mono',monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-zh);
+  min-height:100vh;
+  font-size:14px;
+  overscroll-behavior:none;
+}
+
+/* ── HERO ── */
+.hero{
+  background:var(--bg2);
+  padding:16px 18px 14px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:60;
+}
+.hero-inner{display:flex;align-items:center;gap:14px;}
+.hero-svg{flex-shrink:0;}
+.hero-text h1{
+  font-family:var(--font-en);
+  font-size:21px;font-weight:300;
+  color:var(--gold2);
+  letter-spacing:.06em;line-height:1.15;
+  font-style:italic;
+}
+.hero-text h1 em{font-style:normal;font-weight:600;}
+.hero-text p{
+  font-size:10px;color:var(--muted);
+  letter-spacing:.14em;text-transform:uppercase;
+  margin-top:3px;font-family:var(--font-mono);
+}
+
+/* ── TABS ── */
+.tabs{
+  display:flex;background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:65px;z-index:59;
+}
+.tab{
+  flex:1;padding:11px 4px;text-align:center;
+  font-size:11px;color:var(--muted);
+  border:none;background:none;cursor:pointer;
+  border-bottom:2px solid transparent;
+  letter-spacing:.06em;
+  font-family:var(--font-mono);
+}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* ── TOOLBAR ── */
+.toolbar{background:var(--surface);border-bottom:1px solid var(--border);}
+.sbar{padding:10px 16px;}
+.sbar input{
+  width:100%;background:var(--surface2);
+  border:1px solid var(--border2);
+  border-radius:var(--radius);
+  padding:9px 14px;color:var(--text);
+  font-size:13px;outline:none;
+  font-family:var(--font-zh);
+}
+.sbar input:focus{border-color:var(--gold);}
+.sbar input::placeholder{color:var(--muted);}
+.fscroll{
+  display:flex;gap:6px;padding:0 16px 10px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.fscroll::-webkit-scrollbar{display:none;}
+.fbtn{
+  flex-shrink:0;padding:5px 12px;border-radius:20px;
+  border:1px solid var(--border2);background:none;
+  color:var(--muted);font-size:11px;cursor:pointer;
+  white-space:nowrap;font-family:var(--font-mono);
+  transition:all .15s;
+}
+.fbtn.active{color:#1a1612!important;border-color:transparent;font-weight:600;}
+.f-ALL.active{background:var(--text2);}
+.f-OF.active{background:var(--OF);}.f-MA.active{background:var(--MA);}
+.f-DA.active{background:var(--DA);}.f-SI.active{background:var(--SI);}
+.f-HI.active{background:var(--HI);}.f-FL.active{background:var(--FL);}
+.f-CU.active{background:var(--CU);}
+.rcount{
+  padding:5px 16px;font-size:10px;
+  color:var(--muted);letter-spacing:.06em;
+  font-family:var(--font-mono);
+}
+
+/* ── LIST ── */
+#lview{display:block;}
+#fview,#aview{display:none;}
+
+.ci{
+  display:flex;align-items:center;
+  padding:13px 16px;
+  border-bottom:1px solid var(--border);
+  gap:12px;cursor:pointer;
+  transition:background .12s;
+}
+.ci:active{background:var(--surface);}
+.cdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.d-OF{background:var(--OF);}.d-MA{background:var(--MA);}.d-DA{background:var(--DA);}
+.d-SI{background:var(--SI);}.d-HI{background:var(--HI);}.d-FL{background:var(--FL);}.d-CU{background:var(--CU);}
+.cinfo{flex:1;min-width:0;}
+.cen{
+  font-family:var(--font-en);font-size:17px;font-style:italic;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:var(--text);line-height:1.2;
+}
+.czh{font-size:11px;color:var(--muted);margin-top:1px;}
+.ctags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.tag{
+  font-size:10px;padding:2px 6px;
+  background:var(--surface2);color:var(--muted);
+  border-radius:3px;font-family:var(--font-mono);
+}
+.cright{text-align:right;flex-shrink:0;}
+.cmeth{font-size:10px;color:var(--dim);font-family:var(--font-mono);}
+.cdone{font-size:10px;color:var(--MA);margin-top:2px;}
+.cchev{font-size:16px;color:var(--border2);margin-top:3px;}
+
+/* ── DETAIL MODAL ── */
+.mbg{
+  display:none;position:fixed;inset:0;
+  background:rgba(15,12,9,0.92);
+  z-index:200;overflow-y:auto;
+}
+.mbg.open{display:block;}
+.mbox{
+  background:var(--surface);
+  margin:50px 10px 30px;
+  border-radius:12px;overflow:hidden;position:relative;
+  border:1px solid var(--border2);
+}
+.m-topbar{
+  display:flex;justify-content:flex-end;
+  gap:8px;padding:12px 14px 0;
+}
+.mbtn{
+  padding:5px 13px;border-radius:20px;
+  font-size:11px;cursor:pointer;
+  font-family:var(--font-mono);letter-spacing:.04em;
+  border:1px solid;transition:opacity .15s;
+}
+.mbtn:active{opacity:.75;}
+.mbtn-edit{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
+.mbtn-del{border-color:#c87070;color:#c87070;background:rgba(200,112,112,.08);}
+.mbtn-close{border-color:var(--border2);color:var(--muted);background:none;}
+
+.mhead{padding:16px 18px 14px;border-bottom:1px solid var(--border);}
+.mfam-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;font-family:var(--font-mono);}
+.men-title{font-family:var(--font-en);font-size:26px;font-weight:400;font-style:italic;line-height:1.2;}
+.mzh-title{font-size:13px;color:var(--muted);margin-top:3px;}
+.mdone-badge{
+  display:inline-block;margin-top:6px;
+  padding:3px 8px;background:rgba(126,184,164,.12);
+  color:var(--MA);border-radius:3px;
+  font-size:10px;font-family:var(--font-mono);letter-spacing:.06em;
+}
+
+.mbody{padding:0 18px 28px;}
+.msec{margin-top:18px;}
+.mlbl{
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:8px;padding-bottom:6px;
+  border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);
+}
+.rlines{display:flex;flex-direction:column;gap:4px;}
+.rline{
+  font-size:12.5px;padding:8px 12px;
+  background:var(--surface2);border-radius:5px;
+  line-height:1.4;font-family:var(--font-mono);
+}
+.ramt{color:var(--gold);font-weight:500;margin-right:5px;}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.mcell{background:var(--surface2);padding:9px 12px;border-radius:5px;}
+.mcell .lbl{
+  font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.08em;
+  display:block;margin-bottom:3px;font-family:var(--font-mono);
+}
+.mcell .val{font-size:12px;line-height:1.4;}
+.ftags{display:flex;flex-wrap:wrap;gap:5px;}
+.fchip{
+  padding:4px 10px;background:var(--surface2);
+  border-radius:20px;font-size:11px;color:var(--text2);
+}
+.sbox{
+  padding:10px 13px;border-radius:0 5px 5px 0;
+  font-size:12px;line-height:1.7;
+}
+.sbox-note{background:var(--surface2);border-left:2px solid var(--gold);color:var(--text2);}
+.sbox-brand{background:var(--surface2);border-left:2px solid var(--MA);color:#9ed4c4;}
+.sbox-hist{background:var(--surface2);border-left:2px solid var(--SI);color:#c4a8d8;}
+
+/* ── EDIT MODAL ── */
+.ebg{
+  display:none;position:fixed;inset:0;
+  background:rgba(15,12,9,0.94);
+  z-index:300;overflow-y:auto;
+}
+.ebg.open{display:block;}
+.ebox{
+  background:var(--surface);
+  margin:50px 10px 30px;
+  border-radius:12px;overflow:hidden;
+  border:1px solid var(--border2);
+}
+.ehead{
+  padding:16px 18px 12px;
+  border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.ehead h2{
+  font-family:var(--font-en);
+  font-size:20px;font-weight:400;font-style:italic;
+  color:var(--gold);
+}
+.ehead p{font-size:11px;color:var(--muted);margin-top:3px;}
+.eclose-btn{
+  padding:5px 12px;border-radius:20px;
+  border:1px solid var(--border2);background:none;
+  color:var(--muted);font-size:11px;cursor:pointer;
+  font-family:var(--font-mono);flex-shrink:0;margin-top:2px;
+}
+.ebody{padding:16px 18px 28px;display:flex;flex-direction:column;gap:12px;}
+.erow{display:flex;flex-direction:column;gap:5px;}
+.erow label{
+  font-size:10px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.08em;
+  font-family:var(--font-mono);
+}
+.erow input,.erow select,.erow textarea{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--radius);padding:9px 11px;
+  color:var(--text);font-size:13px;outline:none;
+  font-family:var(--font-zh);width:100%;
+  transition:border-color .15s;
+}
+.erow input:focus,.erow select:focus,.erow textarea:focus{border-color:var(--gold);}
+.erow textarea{resize:vertical;min-height:70px;line-height:1.6;}
+.erow select option{background:var(--surface2);}
+.erow .hint{font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;font-family:var(--font-mono);}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.esave-btn{
+  width:100%;padding:13px;border-radius:var(--radius);
+  border:none;background:var(--gold);color:#1a1612;
+  font-size:13px;font-weight:700;cursor:pointer;
+  font-family:var(--font-zh);margin-top:4px;
+  transition:opacity .15s;
+}
+.esave-btn:active{opacity:.82;}
+.ecancel-btn{
+  width:100%;padding:11px;border-radius:var(--radius);
+  border:1px solid var(--border2);background:none;
+  color:var(--muted);font-size:13px;cursor:pointer;
+  font-family:var(--font-mono);margin-top:6px;
+}
+.echk-row{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;color:var(--text2);
+}
+
+/* ── FLASH ── */
+.fwrap{
+  padding:20px 16px;display:flex;
+  flex-direction:column;align-items:center;
+}
+.fprog{
+  font-size:11px;color:var(--muted);
+  margin-bottom:14px;letter-spacing:.06em;
+  font-family:var(--font-mono);
+}
+.fcard{
+  width:100%;max-width:400px;
+  background:var(--surface);border-radius:12px;
+  border:1px solid var(--border2);
+  padding:28px 22px;text-align:center;
+  min-height:220px;display:flex;
+  flex-direction:column;align-items:center;
+  justify-content:center;cursor:pointer;
+  transition:background .12s;
+}
+.fcard:active{background:var(--surface2);}
+.ftap{
+  font-size:10px;color:var(--dim);
+  letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:14px;font-family:var(--font-mono);
+}
+.fen-flash{
+  font-family:var(--font-en);font-size:27px;
+  font-style:italic;margin-bottom:5px;line-height:1.2;
+}
+.fzh-name{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.fans{
+  width:100%;text-align:left;
+  border-top:1px solid var(--border);padding-top:13px;
+}
+.frow{
+  display:flex;justify-content:space-between;
+  padding:5px 0;border-bottom:1px solid var(--border);gap:10px;
+}
+.frow:last-child{border-bottom:none;}
+.flbl{font-size:10px;color:var(--muted);flex-shrink:0;width:38px;font-family:var(--font-mono);}
+.fval{font-size:11px;color:var(--text2);text-align:right;flex:1;line-height:1.5;font-family:var(--font-mono);}
+.fbtns{display:flex;gap:8px;margin-top:16px;width:100%;max-width:400px;}
+.fbbtn{
+  flex:1;padding:12px 8px;border-radius:var(--radius);
+  border:1px solid var(--border2);background:var(--surface);
+  color:var(--muted);font-size:13px;cursor:pointer;
+  font-family:var(--font-mono);transition:border-color .15s;
+}
+.fbbtn.p{border-color:var(--gold);color:var(--gold);}
+.fshuffle{
+  width:100%;max-width:400px;margin-top:8px;
+  padding:11px;border-radius:var(--radius);
+  border:1px solid var(--border);background:none;
+  color:var(--muted);font-size:12px;cursor:pointer;
+  font-family:var(--font-mono);letter-spacing:.04em;
+}
+
+/* ── ADD VIEW ── */
+.awrap{padding:20px 16px;}
+.awrap h2{
+  font-family:var(--font-en);font-size:22px;
+  font-weight:400;font-style:italic;
+  color:var(--gold);margin-bottom:3px;
+}
+.awrap .sub{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+
+/* ── CONFIRM DIALOG ── */
+.cbg{
+  display:none;position:fixed;inset:0;
+  background:rgba(15,12,9,0.94);
+  z-index:400;align-items:center;
+  justify-content:center;padding:20px;
+}
+.cbg.open{display:flex;}
+.cbox{
+  background:var(--surface);border-radius:12px;
+  padding:24px 20px;max-width:320px;width:100%;
+  border:1px solid var(--border2);
+}
+.cbox h3{font-size:17px;margin-bottom:8px;color:var(--text);}
+.cbox p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+.cbox-btns{display:flex;gap:8px;}
+.cbtn-cancel{
+  flex:1;padding:11px;border-radius:var(--radius);
+  border:1px solid var(--border2);background:none;
+  color:var(--muted);font-size:13px;cursor:pointer;font-family:var(--font-mono);
+}
+.cbtn-del{
+  flex:1;padding:11px;border-radius:var(--radius);
+  border:none;background:#c87070;color:#fff;
+  font-size:13px;cursor:pointer;font-family:var(--font-mono);font-weight:600;
+}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:30px;left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--surface3);border:1px solid var(--border2);
+  color:var(--text);padding:10px 20px;border-radius:30px;
+  font-size:12px;opacity:0;transition:all .28s;
+  z-index:500;white-space:nowrap;pointer-events:none;
+  font-family:var(--font-mono);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── MEASURE NOTE ── */
+.measure-note{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--radius);padding:8px 12px;
+  font-size:11px;color:var(--muted);margin-bottom:16px;
+  font-family:var(--font-mono);line-height:1.6;
+}
+.measure-note span{color:var(--gold);}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 7 L25 29 L25 41" stroke="#c8a96e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M41 7 L25 29" stroke="#c8a96e" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="7" y1="7" x2="43" y2="7" stroke="#c8a96e" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="17" y1="41" x2="33" y2="41" stroke="#c8a96e" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M13 16 L22.5 27 L27.5 27 L37 16" stroke="#c8a96e" stroke-width=".7" stroke-linecap="round" opacity=".35"/>
+      <circle cx="37" cy="6.5" r="2.5" stroke="#e07a7a" stroke-width="1" fill="none"/>
+      <line x1="35.2" y1="4.8" x2="32" y2="2" stroke="#7eb8a4" stroke-width="1" stroke-linecap="round"/>
+      <line x1="33" y1="9" x2="41" y2="4" stroke="#c8a96e" stroke-width=".8" stroke-linecap="round" opacity=".55"/>
+      <circle cx="19" cy="20" r=".9" fill="#c8a96e" opacity=".45"/>
+      <circle cx="22" cy="24" r=".65" fill="#c8a96e" opacity=".3"/>
+    </svg>
+    <div class="hero-text">
+      <h1><em>Eru's</em> Cocktail Space</h1>
+      <p id="hdrcount">載入中…</p>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" id="tab-l" onclick="switchTab('l')">📋 瀏覽</button>
+  <button class="tab" id="tab-f" onclick="switchTab('f')">🃏 閃卡</button>
+  <button class="tab" id="tab-a" onclick="switchTab('a')">＋ 新增</button>
+</div>
+
+<!-- LIST VIEW -->
+<div id="lview">
+  <div class="toolbar">
+    <div class="sbar"><input type="text" id="sinput" placeholder="搜尋酒名、材料、風味、歷史…" oninput="doFilter()"></div>
+    <div class="fscroll">
+      <button class="fbtn f-ALL active" onclick="setFam('ALL')">全部</button>
+      <button class="fbtn f-OF" onclick="setFam('OF')">🟤 Old-Fashioned</button>
+      <button class="fbtn f-MA" onclick="setFam('MA')">🟢 Martini</button>
+      <button class="fbtn f-DA" onclick="setFam('DA')">🔴 Daiquiri</button>
+      <button class="fbtn f-SI" onclick="setFam('SI')">🟣 Sidecar</button>
+      <button class="fbtn f-HI" onclick="setFam('HI')">🔵 Highball</button>
+      <button class="fbtn f-FL" onclick="setFam('FL')">🟡 Flip</button>
+      <button class="fbtn f-CU" onclick="setFam('CU')">⚪ 自訂</button>
+    </div>
+    <div class="rcount" id="rcount">—</div>
+  </div>
+  <div id="clist"></div>
+</div>
+
+<!-- FLASH VIEW -->
+<div id="fview">
+  <div class="fwrap">
+    <div class="fprog" id="fprog">1 / —</div>
+    <div class="fcard" id="fcard" onclick="revealCard()">
+      <div class="ftap" id="ftap">點擊翻牌</div>
+      <div class="fen-flash" id="fen-f"></div>
+      <div class="fzh-name" id="fzh-f"></div>
+      <div class="fans" id="fans" style="display:none"></div>
+    </div>
+    <div class="fbtns">
+      <button class="fbbtn" onclick="flashPrev()">← 上一張</button>
+      <button class="fbbtn p" onclick="flashNext()">下一張 →</button>
+    </div>
+    <button class="fshuffle" onclick="flashShuffle()">🔀 隨機排序</button>
+  </div>
+</div>
+
+<!-- ADD VIEW -->
+<div id="aview">
+  <div class="awrap">
+    <h2>新增酒譜</h2>
+    <p class="sub">自創酒、課堂補充、任何你想記的都可以加進來。<br>儲存在這個裝置的瀏覽器中。</p>
+    <div class="measure-note">
+      🇮🇪 愛爾蘭計量單位：<span>Single = 25ml</span>，<span>Double = 50ml</span>，<span>½ single = 12.5ml</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="twocol">
+        <div class="erow"><label>英文名稱 *</label><input type="text" id="a-en" placeholder="e.g. My Spritz"></div>
+        <div class="erow"><label>中文名稱</label><input type="text" id="a-zh" placeholder="選填"></div>
+      </div>
+      <div class="twocol">
+        <div class="erow"><label>原型家族</label>
+          <select id="a-fam">
+            <option value="CU">⚪ 自訂</option><option value="OF">🟤 Old-Fashioned</option>
+            <option value="MA">🟢 Martini</option><option value="DA">🔴 Daiquiri</option>
+            <option value="SI">🟣 Sidecar</option><option value="HI">🔵 Highball</option><option value="FL">🟡 Flip</option>
+          </select>
+        </div>
+        <div class="erow"><label>技法</label>
+          <select id="a-meth"><option>Shake</option><option>Stir</option><option>Build</option><option>Blend</option><option>Shake+Build</option><option>Muddle+Build</option><option>其他</option></select>
+        </div>
+      </div>
+      <div class="twocol">
+        <div class="erow"><label>基酒</label><input type="text" id="a-spirit" placeholder="Gin, Rum…"></div>
+        <div class="erow"><label>杯型</label><input type="text" id="a-glass" placeholder="Coupe…"></div>
+      </div>
+      <div class="erow">
+        <label>配方（每行一項，使用 ml）</label>
+        <textarea id="a-recipe" placeholder="50ml Gin&#10;25ml Lemon Juice&#10;25ml Simple Syrup"></textarea>
+      </div>
+      <div class="erow"><label>風味（逗號分隔）</label><input type="text" id="a-flavor" placeholder="酸, 清爽, 草本"></div>
+      <div class="erow"><label>廠牌 / 種類建議</label><textarea id="a-brand" rows="2" placeholder="推薦廠牌或注意事項"></textarea></div>
+      <div class="erow"><label>歷史背景</label><input type="text" id="a-hist" placeholder="選填"></div>
+      <div class="erow"><label>重點筆記</label><textarea id="a-note" placeholder="技巧、變形、提醒…"></textarea></div>
+      <div class="erow"><label class="echk-row"><input type="checkbox" id="a-done" style="margin-right:6px"> 上課做過 / 已練習過</label></div>
+      <button class="esave-btn" onclick="addCustom()">加入清單</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="mbg" id="mbg" onclick="tryCloseM(event)">
+  <div class="mbox" id="mbox">
+    <div class="m-topbar">
+      <button class="mbtn mbtn-del" onclick="confirmDelete()">刪除</button>
+      <button class="mbtn mbtn-edit" onclick="openEdit()">編輯</button>
+      <button class="mbtn mbtn-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="mcontent"></div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="ebg" id="ebg" onclick="tryCloseE(event)">
+  <div class="ebox">
+    <div class="ehead">
+      <div><h2>編輯酒譜</h2><p id="edit-sub"></p></div>
+      <button class="eclose-btn" onclick="closeEdit()">取消</button>
+    </div>
+    <div class="ebody">
+      <div class="twocol">
+        <div class="erow"><label>英文名稱</label><input type="text" id="e-en"></div>
+        <div class="erow"><label>中文名稱</label><input type="text" id="e-zh"></div>
+      </div>
+      <div class="twocol">
+        <div class="erow"><label>原型家族</label>
+          <select id="e-fam">
+            <option value="OF">🟤 Old-Fashioned</option><option value="MA">🟢 Martini</option>
+            <option value="DA">🔴 Daiquiri</option><option value="SI">🟣 Sidecar</option>
+            <option value="HI">🔵 Highball</option><option value="FL">🟡 Flip</option><option value="CU">⚪ 自訂</option>
+          </select>
+        </div>
+        <div class="erow"><label>技法</label>
+          <select id="e-meth">
+            <option>Shake</option><option>Stir</option><option>Build</option><option>Blend</option>
+            <option>Shake+Build</option><option>Muddle+Build</option><option>Shake（長搖）</option>
+            <option>Shake+Float</option><option>其他</option>
+          </select>
+        </div>
+      </div>
+      <div class="twocol">
+        <div class="erow"><label>基酒（逗號分隔）</label><input type="text" id="e-spirit"></div>
+        <div class="erow"><label>杯型</label><input type="text" id="e-glass"></div>
+      </div>
+      <div class="erow">
+        <label>配方（每行一項）</label>
+        <textarea id="e-recipe" rows="6"></textarea>
+        <span class="hint">每行一種材料，使用 ml 計量</span>
+      </div>
+      <div class="erow"><label>風味（逗號分隔）</label><input type="text" id="e-flavor"></div>
+      <div class="erow"><label>廠牌 / 種類建議</label><textarea id="e-brand" rows="3"></textarea></div>
+      <div class="erow"><label>歷史背景</label><textarea id="e-hist" rows="3"></textarea></div>
+      <div class="erow"><label>重點筆記</label><textarea id="e-note" rows="3"></textarea></div>
+      <div class="erow"><label class="echk-row"><input type="checkbox" id="e-done" style="margin-right:6px"> 上課做過 / 已練習過</label></div>
+      <button class="esave-btn" onclick="saveEdit()">儲存變更</button>
+      <button class="ecancel-btn" onclick="closeEdit()">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="cbg" id="cbg">
+  <div class="cbox">
+    <h3>確定刪除？</h3>
+    <p id="cdesc">這個動作無法復原。</p>
+    <div class="cbox-btns">
+      <button class="cbtn-cancel" onclick="document.getElementById('cbg').classList.remove('open')">取消</button>
+      <button class="cbtn-del" onclick="doDelete()">確定刪除</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 愛爾蘭計量換算 ──
+// 1 oz = 28.41ml (Imperial), 但 Irish bar 實際用 25/50ml
+// 換算規則：1 oz → 25ml, 1.5 oz → 37.5ml ≈ 37ml, 2 oz → 50ml
+// ¾ oz → 18.75ml ≈ 20ml, ½ oz → 12.5ml, ¼ oz → 7ml ≈ 7.5ml
+
+var FC={
+  OF:{l:"Old-Fashioned",c:"#c8a96e"},
+  MA:{l:"Martini",c:"#7eb8a4"},
+  DA:{l:"Daiquiri",c:"#e07a7a"},
+  SI:{l:"Sidecar",c:"#b07ec8"},
+  HI:{l:"Highball",c:"#7eaac8"},
+  FL:{l:"Flip",c:"#c8b07e"},
+  CU:{l:"自訂",c:"#9a9288"}
+};
+
+var BASE=[
+// ── OLD-FASHIONED ──
+{en:"Old Fashioned",zh:"老式雞尾酒",f:"OF",s:["Bourbon"],m:"Stir",g:"Rocks",
+r:["50ml Bourbon","1 tsp Sugar","2 dash Angostura Bitters","Orange peel（裝飾）"],
+fl:["甜","苦","木質","香草"],
+brand:"Bourbon 推薦：Buffalo Trace、Bulleit、Maker's Mark。Rye Whiskey（如 Rittenhouse）風味更辛辣。",
+hist:"19世紀初美國，1806年紐約報紙首次出現 cocktail 定義（烈酒＋糖＋苦精＋水）。Old Fashioned 就是這個定義的具現。「Old Fashioned」名字來自常客要求「用老式方法做酒」。",
+n:"根源原型。方糖先加苦精溶解再加冰攪拌。橙皮表達（express）是必要的，不可省略。",done:true},
+
+{en:"Manhattan",zh:"曼哈頓",f:"OF",s:["Rye/Bourbon"],m:"Stir",g:"Coupe",
+r:["50ml Rye Whiskey","25ml Sweet Vermouth","2 dash Angostura Bitters","Maraschino Cherry（裝飾）"],
+fl:["甜","苦","香料","複雜"],
+brand:"Rye 推薦：Rittenhouse、Michter's。Vermouth 推薦：Carpano Antica Formula（最複雜）、Dolin Rouge（清爽）。Vermouth 開瓶後冷藏，一個月內用完。",
+hist:"1870年代紐約 Manhattan Club 誕生。19世紀末已是美國最受歡迎的調酒之一。",
+n:"Old-Fashioned 加 Vermouth，更圓潤。Vermouth 品質直接影響成品，不可使用廉價款。",done:true},
+
+{en:"Rob Roy",zh:"羅伯羅伊",f:"OF",s:["Scotch"],m:"Stir",g:"Coupe",
+r:["50ml Scotch","25ml Sweet Vermouth","2 dash Angostura Bitters"],
+fl:["煙燻","甜","草本"],
+brand:"Scotch 推薦：Famous Grouse、Dewar's White Label。避免重泥煤款如 Laphroaig，會蓋過其他風味。",
+hist:"1894年紐約，為慶祝蘇格蘭民族英雄 Rob Roy 音樂劇首演而創作。Manhattan 的 Scotch 版本。",
+n:"結構與 Manhattan 完全相同，僅換基酒。Scotch 的煙燻感是和 Manhattan 的主要差異。",done:false},
+
+{en:"Boulevardier",zh:"布勒瓦德",f:"OF",s:["Bourbon"],m:"Stir",g:"Coupe",
+r:["37.5ml Bourbon","25ml Campari","25ml Sweet Vermouth","Orange peel（裝飾）"],
+fl:["苦","甜","香草","橙"],
+brand:"Bourbon 推薦：Wild Turkey 101（酒精感強，平衡 Campari 的苦）。Campari 無替代品。",
+hist:"1920年代巴黎，美國作家 Erskine Gwynne 發明。Negroni 的 Whiskey 版，比 Negroni 更早出現於文字紀錄。",
+n:"Bourbon 比 Gin 更能撐住 Campari 的苦感。比 Negroni 更甜更圓潤。",done:false},
+
+{en:"Sazerac",zh:"薩澤拉克",f:"OF",s:["Rye"],m:"Stir",g:"Rocks",
+r:["50ml Rye Whiskey","7.5ml Absinthe（rinse）","1 tsp Sugar","Peychaud's Bitters","Lemon peel（表達後丟棄）"],
+fl:["茴香","香料","苦","辛"],
+brand:"Peychaud's Bitters 是新奧良本地品牌，不可用 Angostura 代替。Absinthe 推薦 Herbsaint（新奧良傳統）或 Pernod。",
+hist:"1850年代新奧良。2008年被路易斯安那州官方認定為新奧良市酒。美國最古老調酒之一。",
+n:"Absinthe rinse：少量倒入轉動杯壁後倒掉，留下茴香香氣。Lemon peel 表達後丟棄，不放入杯中。",done:true},
+
+{en:"Rusty Nail",zh:"鏽釘子",f:"OF",s:["Scotch"],m:"Build",g:"Rocks",
+r:["37.5ml Scotch","12.5ml Drambuie"],
+fl:["蜂蜜","煙燻","甜"],
+brand:"Drambuie 是蘇格蘭蜂蜜草本利口酒，無替代品。Scotch 推薦 Dewar's 或 Famous Grouse。",
+hist:"1950-60年代美國流行，Drambuie 品牌積極推廣，是戰後雞尾酒黃金年代代表款。",
+n:"傳統比例約 3:1。多 Scotch 較乾，多 Drambuie 較甜。可依客人喜好調整。",done:true},
+
+{en:"Godfather",zh:"教父",f:"OF",s:["Scotch"],m:"Build",g:"Rocks",
+r:["37.5ml Scotch","12.5ml Amaretto"],
+fl:["杏仁","煙燻","甜","圓潤"],
+brand:"Scotch 推薦任何調和威士忌。Amaretto 推薦 Disaronno（最經典）。Vodka 版叫 Godmother（教母）。",
+hist:"1970年代以柯波拉電影《教父》命名，是當時蒸餾廠和酒吧的行銷產物。",
+n:"Amaretto 的杏仁甜感軟化 Scotch 的煙燻。兩種材料，比例決定甜度。",done:false},
+
+{en:"Black Russian",zh:"黑色俄羅斯",f:"OF",s:["Vodka"],m:"Build",g:"Rocks",
+r:["50ml Vodka","25ml Kahlúa"],
+fl:["咖啡","甜","微苦"],
+brand:"Kahlúa 是墨西哥咖啡利口酒，標準選擇。加 Heavy Cream float 變 White Russian。",
+hist:"1949年布魯塞爾，調酒師 Gustave Tops 為美國駐比利時大使創作，以冷戰為背景命名。",
+n:"比例可調，多 Kahlúa 更甜。加 Cream 之後就是 White Russian。",done:true},
+
+{en:"Boulevardier",zh:"布勒瓦德",f:"OF",s:["Bourbon"],m:"Stir",g:"Coupe",
+r:["37.5ml Bourbon","25ml Campari","25ml Sweet Vermouth"],
+fl:["苦","甜","香草","橙"],
+brand:"Bourbon 推薦 Wild Turkey 101。Campari 無替代品。Vermouth 推薦 Carpano Antica。",
+hist:"1920年代巴黎，美國作家 Erskine Gwynne 發明。Negroni 的 Whiskey 版。",
+n:"Negroni 把 Gin 換成 Bourbon。比 Negroni 更甜更圓潤。",done:false},
+
+{en:"Negroni Sbagliato",zh:"錯誤的內格羅尼",f:"OF",s:["Prosecco"],m:"Build",g:"Rocks",
+r:["25ml Campari","25ml Sweet Vermouth","25ml Prosecco"],
+fl:["苦","甜","氣泡","草本"],
+brand:"Prosecco 推薦 Brut 等級。Campari 不可替換。",
+hist:"1960年代米蘭 Bar Basso，調酒師 Mirko Stocchetto 失手把 Gin 換成 Prosecco。2022年 Emma D'Arcy 訪問後全球熱潮。Sbagliato 義大利文即「錯誤的」。",
+n:"Prosecco 帶來氣泡和微甜，比 Negroni 更輕盈，適合餐前。",done:false},
+
+{en:"Vieux Carré",zh:"法式區",f:"OF",s:["Rye","Cognac"],m:"Stir",g:"Rocks",
+r:["18.75ml Rye Whiskey","18.75ml Cognac","18.75ml Sweet Vermouth","7.5ml Bénédictine","2 dash Angostura Bitters","2 dash Peychaud's Bitters"],
+fl:["複雜","甜","草本","香料"],
+brand:"Bénédictine 是法國修道院香草利口酒，無替代品。雙苦精（Angostura＋Peychaud's）是特色。",
+hist:"1930年代新奧良 Hotel Monteleone 的 Walter Bergeron 創作。Vieux Carré 是法文「法式區」，代表新奧良法、美文化融合。",
+n:"五種材料，OF 家族結構最複雜的款式之一。等比例結構。",done:false},
+
+{en:"Black Manhattan",zh:"黑曼哈頓",f:"OF",s:["Bourbon"],m:"Stir",g:"Coupe",
+r:["50ml Bourbon","25ml Averna Amaro","2 dash Bitters"],
+fl:["苦","焦糖","草本"],
+brand:"Averna 是西西里島草本利口酒。可用 Montenegro 或 Nonino 替換，風味各異。",
+hist:"Todd Smith 在舊金山 Bourbon & Branch 約 2005 年創作，是現代 Amaro 調酒浪潮代表作之一。",
+n:"Amaro 苦感比 Vermouth 更深更複雜，適合喜歡苦味的客人。",done:false},
+
+{en:"Toronto",zh:"多倫多",f:"OF",s:["Rye"],m:"Stir",g:"Coupe",
+r:["50ml Rye Whiskey","7.5ml Fernet-Branca","7.5ml Simple Syrup","1 dash Angostura Bitters"],
+fl:["草本","苦","香料"],
+brand:"Fernet-Branca 是義大利藥草苦酒，無替代品。Rye 推薦 Rittenhouse。",
+hist:"出自 Robert Vermeire 1922年著作《Cocktails: How to Mix Them》。",
+n:"Fernet 份量雖少，藥草苦感主導尾韻。",done:false},
+
+{en:"Stinger",zh:"刺針",f:"OF",s:["Cognac"],m:"Shake",g:"Coupe",
+r:["50ml Cognac","25ml White Crème de Menthe"],
+fl:["薄荷","白蘭地","清涼","甜"],
+brand:"White Crème de Menthe 推薦 Marie Brizard 或 Bols（清澈不影響顏色）。",
+hist:"19世紀末美國上流社會餐後酒，二戰後飛行員流行——任務後用來清新口氣。",
+n:"Shake 讓薄荷更冷冽。最適合餐後飲用。",done:false},
+
+// ── MARTINI ──
+{en:"Martini",zh:"馬丁尼",f:"MA",s:["Gin"],m:"Stir",g:"Martini",
+r:["62.5ml Gin","12.5ml Dry Vermouth","Orange peel 或 Olive（裝飾）"],
+fl:["草本","清爽","辛辣","乾"],
+brand:"Gin 種類影響很大：London Dry（Tanqueray、Beefeater）最經典；New Western（Hendrick's、The Botanist）花香風格。Vermouth：Noilly Prat（最乾）、Dolin Dry。Vermouth 比例決定 Dry 程度：Extra Dry 只是 rinse，Perfect 是 Dry＋Sweet 各半。",
+hist:"19世紀末從 Martinez cocktail 演變而來。被稱為「雞尾酒之王」。1904年起倫敦 Savoy Hotel 確立現代形式。",
+n:"Stir 保持清澈，不 Shake。攪拌約 30 秒至冰涼。橙皮或橄欖裝飾。",done:true},
+
+{en:"Dirty Martini",zh:"骯髒馬丁尼",f:"MA",s:["Gin","Vodka"],m:"Stir",g:"Martini",
+r:["62.5ml Gin or Vodka","12.5ml Dry Vermouth","12.5ml Olive Brine","Olives（裝飾）"],
+fl:["鹹","草本","鮮"],
+brand:"Brine 直接來自橄欖罐，不需特殊品牌。Vodka 版推薦 Grey Goose 或 Belvedere。",
+hist:"1901年美國調酒書首次記載，20世紀中在紐約上流社會流行。",
+n:"Brine 量決定 dirty 程度：12.5ml 是中等，25ml 是 Extra Dirty。必須搭配橄欖裝飾。",done:true},
+
+{en:"Vesper",zh:"維斯柏",f:"MA",s:["Gin","Vodka"],m:"Stir",g:"Martini",
+r:["75ml Gin","25ml Vodka","12.5ml Lillet Blanc","Lemon peel（裝飾）"],
+fl:["草本","花香","乾","清爽"],
+brand:"Lillet Blanc 是法國加烈白酒，花香蜂蜜感。現代最接近原版的是 Cocchi Americano。Gin 推薦 Gordon's（原版）或 Tanqueray。",
+hist:"1953年伊恩·弗萊明《皇家賭場》，詹姆士·龐德發明並以雙面諜 Vesper Lynd 命名。「搖勻，不要攪拌」出自此書。",
+n:"龐德說 Shake，但調酒師普遍認為純酒類應 Stir。可依個人選擇。",done:false},
+
+{en:"Gibson",zh:"吉布森",f:"MA",s:["Gin"],m:"Stir",g:"Martini",
+r:["62.5ml Gin","12.5ml Dry Vermouth","Cocktail Onion（裝飾）"],
+fl:["草本","辛","鹹鮮"],
+brand:"Cocktail Onion 是醃製珍珠洋蔥（非一般洋蔥），帶鹹鮮醋味。Gin 推薦 London Dry。",
+hist:"起源眾說紛紜：1800年代末舊金山藝術家 Charles Dana Gibson 一說。",
+n:"換洋蔥帶來鹹、鮮、微酸，代替橄欖的油脂感。",done:false},
+
+{en:"Negroni",zh:"內格羅尼",f:"MA",s:["Gin"],m:"Stir",g:"Rocks",
+r:["25ml Gin","25ml Sweet Vermouth","25ml Campari","Orange peel（裝飾）"],
+fl:["苦","甜","草本","橙"],
+brand:"Gin：London Dry（Tanqueray）最經典；Plymouth 更圓潤；Old Tom 更甜。Campari 無替代品（Aperol 更甜更弱）。Vermouth：Carpano Antica 或 Punt e Mes（更苦）。",
+hist:"1919年佛羅倫斯 Caffè Casoni，伯爵 Camillo Negroni 要求把 Americano 的 Soda 換成 Gin。以其姓氏命名。",
+n:"1:1:1 是靈魂。比例改變平衡感就變了。橙皮裝飾。",done:true},
+
+{en:"Americano",zh:"美國佬",f:"MA",s:["Campari"],m:"Build",g:"Highball",
+r:["37.5ml Campari","37.5ml Sweet Vermouth","Soda Water（fill）","Orange slice（裝飾）"],
+fl:["苦","甜","氣泡","草本"],
+brand:"Campari 無替代品。Vermouth 推薦 Cinzano Rosso 或 Martini Rosso（義大利傳統）。",
+hist:"1860年代米蘭，原名 Milano-Torino。因大量美國遊客喜愛改名。James Bond《皇家賭場》開篇喝的就是這款。",
+n:"義大利 Aperitivo 文化的核心。低酒精，開胃效果好。是 Negroni 的前身。",done:true},
+
+{en:"Hanky Panky",zh:"把戲",f:"MA",s:["Gin"],m:"Stir",g:"Coupe",
+r:["37.5ml Gin","37.5ml Sweet Vermouth","7.5ml Fernet-Branca","Orange peel（裝飾）"],
+fl:["草本","苦","甜","藥草"],
+brand:"Fernet-Branca 是義大利最有名的藥草苦酒，無替代品。Gin 推薦 London Dry。",
+hist:"1920年代倫敦 Savoy Hotel，傳奇女調酒師 Ada Coleman 為演員 Charles Hawtrey 創作。他喝後說「By Jove! That is the real hanky-panky!」",
+n:"Fernet 只需 7.5ml 但存在感強烈，是整款酒個性的來源。",done:false},
+
+{en:"Bamboo",zh:"竹子",f:"MA",s:["Sherry"],m:"Stir",g:"Coupe",
+r:["37.5ml Dry Sherry","37.5ml Dry Vermouth","1 dash Orange Bitters"],
+fl:["堅果","花香","乾","輕盈"],
+brand:"Sherry 推薦 Fino 或 Manzanilla（最乾，有鹹鮮感）。Vermouth 推薦 Dolin Dry 或 Noilly Prat。",
+hist:"1890年代橫濱 Grand Hotel，Louis Eppinger 為日本外籍商人創作。低酒精調酒先驅。",
+n:"酒精約 15-17%，適合不想喝太烈的客人。Sherry 調酒在現代重新流行。",done:false},
+
+{en:"Adonis",zh:"阿多尼斯",f:"MA",s:["Sherry"],m:"Stir",g:"Coupe",
+r:["37.5ml Dry Sherry","18.75ml Sweet Vermouth","1 dash Orange Bitters"],
+fl:["甜","堅果","果香","輕盈"],
+brand:"Sherry 推薦 Amontillado（堅果感和甜度更平衡）。Vermouth 推薦 Dolin Rouge。",
+hist:"1884年紐約，為慶祝百老匯音樂劇《Adonis》首演創作（500場以上，當時史上最長演出）。",
+n:"Bamboo 的甜版前輩。以 Sweet 取代 Dry Vermouth。",done:false},
+
+// ── DAIQUIRI ──
+{en:"Daiquiri",zh:"黛克瑞",f:"DA",s:["White Rum"],m:"Shake",g:"Coupe",
+r:["50ml White Rum","20ml Fresh Lime Juice","20ml Simple Syrup"],
+fl:["酸","甜","清爽","輕盈"],
+brand:"Rum 推薦：Bacardi Superior、Havana Club 3 Year、Mount Gay Silver。避免 Dark 或 Spiced Rum。Simple Syrup 1:1（糖:水）。",
+hist:"1898年古巴 Daiquirí 礦山，美國工程師 Jennings Cox 用當地 Rum 和萊姆即興調製。海明威常駐哈瓦那 La Floridita 使其國際聞名。",
+n:"Sour 家族的原型。所有 Sour 的比例基準：2:¾:¾（ml 版本：50:20:20）。現榨 Lime 是必要條件，罐裝完全無法替代。",done:true},
+
+{en:"Hemingway Daiquiri",zh:"海明威黛克瑞",f:"DA",s:["White Rum"],m:"Shake",g:"Coupe",
+r:["50ml White Rum","20ml Fresh Lime Juice","15ml Fresh Grapefruit Juice","15ml Maraschino Liqueur"],
+fl:["酸","葡萄柚","苦甜","乾"],
+brand:"Maraschino 推薦 Luxardo（義大利，最正統）。Grapefruit 必須現榨。Rum 推薦 Bacardi Superior 或 Havana Club 3。",
+hist:"海明威患糖尿病，要求 La Floridita 調酒師做不加糖、雙份 Rum 的版本。又名 Papa Doble（老爸雙份）。",
+n:"不加 Simple Syrup，靠 Maraschino 天然甜味平衡。比標準版更乾、更複雜。",done:true},
+
+{en:"Margarita",zh:"瑪格麗特",f:"DA",s:["Tequila"],m:"Shake",g:"Rocks",
+r:["50ml Tequila Blanco","25ml Fresh Lime Juice","25ml Cointreau","Salt rim（可選）"],
+fl:["酸","甜","龍舌蘭","橙"],
+brand:"Tequila 必須是 100% Agave，推薦 Blanco：Espolòn、Cazadores、Patrón Silver。Triple Sec 推薦 Cointreau。",
+hist:"起源眾說紛紜，最可信版本是 1938-40年代加州或德州。另一說是 Carlos Herrera 在 Tijuana 為舞者 Marjorie King 創作。",
+n:"Daiquiri 換 Tequila，Cointreau 兼具甜味和橙香。Salt rim 可依客人選擇。",done:true},
+
+{en:"Gimlet",zh:"琴蕾",f:"DA",s:["Gin"],m:"Shake",g:"Coupe",
+r:["50ml Gin","20ml Fresh Lime Juice","20ml Simple Syrup"],
+fl:["草本","酸","清爽","甜"],
+brand:"Gin：London Dry（Tanqueray）最經典；Plymouth 更圓潤是傳統；Old Tom 更甜需減少 Simple Syrup。傳統配方用 Rose's Lime Cordial。",
+hist:"19世紀英國皇家海軍防止壞血病強制飲用萊姆汁加 Gin。Raymond Chandler《漫長的告別》名句：「真正的 Gimlet 是一半 Gin 一半 Rose's Lime Cordial」。",
+n:"現代版用新鮮萊姆汁，傳統版用 Rose's Lime Cordial，兩種風味迥異。",done:true},
+
+{en:"Caipirinha",zh:"卡碧尼亞",f:"DA",s:["Cachaça"],m:"Muddle+Build",g:"Rocks",
+r:["50ml Cachaça","½ Lime（切成 4-6 塊）","2 tsp Caster Sugar"],
+fl:["酸","甜","草本","清爽"],
+brand:"Cachaça 是巴西甘蔗烈酒（非 Rum），推薦 Leblon 或 Novo Fogo Silver。Vodka 替換叫 Caipiroska，Rum 替換叫 Caipirissima。",
+hist:"19世紀末巴西農村，原始版本用 Cachaça 加萊姆和糖治療流感。2003年巴西政府正式認定為國家烈酒和國民調酒。",
+n:"Muddle 萊姆時連皮一起搗，釋出精油。直接在杯中製作，不過濾，連萊姆果肉一起上。",done:true},
+
+{en:"Kamikaze",zh:"神風特攻隊",f:"DA",s:["Vodka"],m:"Shake",g:"Coupe",
+r:["25ml Vodka","25ml Cointreau","25ml Fresh Lime Juice"],
+fl:["酸","橙","清爽"],
+brand:"Vodka 推薦任何標準款。Cointreau 而非廉價 Triple Sec。等比例 1:1:1 是標準。",
+hist:"1970年代美國流行，來源不明。是 Sidecar 結構的 Vodka 版。",
+n:"可做成 Shot 或 Up（去冰）。等量三材料是關鍵。",done:true},
+
+{en:"Whiskey Sour",zh:"威士忌酸酒",f:"DA",s:["Bourbon"],m:"Shake",g:"Rocks",
+r:["50ml Bourbon","20ml Fresh Lemon Juice","20ml Simple Syrup","（可選）Egg White 1 個"],
+fl:["酸","甜","木質","香草"],
+brand:"Bourbon 推薦 Bulleit、Jim Beam White、Buffalo Trace。Rye 版風味更辛辣。加 Red Wine float 是 New York Sour。",
+hist:"1870年代《Bar-Tender's Guide》（Jerry Thomas）首次收錄。Sour 公式（烈酒＋酸＋甜）是現代調酒的基礎結構。",
+n:"加蛋白需先 Dry Shake（不加冰搖 15 秒），再加冰 Shake。蛋白帶來綿密口感，非常推薦加入。",done:true},
+
+{en:"Pisco Sour",zh:"皮斯可酸酒",f:"DA",s:["Pisco"],m:"Shake",g:"Coupe",
+r:["50ml Pisco","25ml Fresh Lime Juice","20ml Simple Syrup","Egg White 1 個","3 dash Angostura Bitters（表面裝飾）"],
+fl:["酸","果香","花香","綿密"],
+brand:"Pisco 推薦祕魯品牌：Barsol Quebranta（圓潤）或 PortoFino。",
+hist:"1920年代利馬，美國商人 Victor Morris 在 Morris' Bar 創作。祕魯和智利至今仍爭奪 Pisco 產權。",
+n:"蛋白是必要的。Angostura 三滴點在泡沫上是傳統裝飾。",done:false},
+
+{en:"Amaretto Sour",zh:"杏仁酸酒",f:"DA",s:["Amaretto","Bourbon"],m:"Shake",g:"Rocks",
+r:["37.5ml Amaretto","18.75ml Bourbon","25ml Fresh Lemon Juice","12.5ml Simple Syrup","Egg White 1 個"],
+fl:["杏仁","酸","甜","果香"],
+brand:"Amaretto 推薦 Disaronno（最甜最常見）或 Lazzaroni（更苦更杏仁）。Bourbon 推薦任何 80-86 proof 款。",
+hist:"Jeffrey Morgenthaler 2012年發布改良版，加入 Bourbon 和蛋白，把「老土甜酒」重新帶入精緻調酒舞台。",
+n:"Bourbon 是秘密武器：只占少量但提供骨架，讓 Amaretto 不甜膩失衡。Dry Shake 先。",done:true},
+
+{en:"Clover Club",zh:"三葉草俱樂部",f:"DA",s:["Gin"],m:"Shake",g:"Coupe",
+r:["50ml Gin","20ml Fresh Lemon Juice","20ml Raspberry Syrup","Egg White 1 個"],
+fl:["覆盆子","酸","花香","綿密"],
+brand:"Gin 推薦 London Dry（Tanqueray）或 Plymouth。Raspberry Syrup 可自製（新鮮覆盆子＋等量糖）或用 Monin。",
+hist:"1900年代費城 Bellevue-Stratford Hotel，以同名男性社交俱樂部命名。禁酒令後幾乎消失，直到 2000 年代精釀調酒復興才重新流行。",
+n:"Dry Shake 先（不加冰搖 15 秒），再加冰 Shake。",done:true},
+
+{en:"Bee's Knees",zh:"蜜蜂膝",f:"DA",s:["Gin"],m:"Shake",g:"Coupe",
+r:["50ml Gin","20ml Fresh Lemon Juice","20ml Honey Syrup"],
+fl:["蜂蜜","花香","草本","酸"],
+brand:"Gin 推薦花香類型：Hendrick's 或 Aviation。Honey Syrup：蜂蜜和熱水 1:1 混合（不可直接用純蜂蜜）。",
+hist:"美國禁酒令時期（1920-33），蜂蜜和檸檬用來掩蓋劣質私釀 Gin 的氣味。「Bee's Knees」是當時俚語，意思類似「絕頂好」。",
+n:"蜂蜜糖漿比 Simple Syrup 更圓潤，是這款酒的靈魂風味。",done:false},
+
+{en:"Last Word",zh:"最後一句話",f:"DA",s:["Gin"],m:"Shake",g:"Coupe",
+r:["18.75ml Gin","18.75ml Green Chartreuse","18.75ml Maraschino Liqueur","18.75ml Fresh Lime Juice"],
+fl:["草本","甜","酸","複雜"],
+brand:"Green Chartreuse 是法國修道院僧侶秘方草本利口酒（130種草本），無法替換。Maraschino 推薦 Luxardo。",
+hist:"1920年代禁酒令時期底特律創作，消失 70 年。2004年西雅圖 Zig Zag Café 的 Murray Stenson 重新推出，引發全美現代調酒復興浪潮。",
+n:"完美 1:1:1:1 等比例，四種材料沒有主從。Green Chartreuse 的酒精度（55%）讓它比外表更有力量。",done:false},
+
+{en:"Porn Star Martini",zh:"色情明星馬丁尼",f:"DA",s:["Vodka"],m:"Shake",g:"Martini",
+r:["37.5ml Vanilla Vodka","12.5ml Passoa","25ml Passion Fruit Purée","12.5ml Fresh Lime Juice","Half Passion Fruit（裝飾）","Prosecco Shot（旁飲，50ml）"],
+fl:["百香果","香草","甜","熱帶"],
+brand:"Vanilla Vodka 推薦 Absolut Vanilia 或 Stolichnaya Vanilla。Passoa 是百香果利口酒。Passion Fruit Purée 新鮮或冷凍均可。",
+hist:"2002年倫敦，Douglas Ankrah 在 Townhouse bar 創作。是愛爾蘭酒吧點單榜第一名之一。",
+n:"標準服務：Martini 杯上放半個百香果殼，旁邊附 50ml Prosecco Shot。客人先喝 Martini，中間喝 Prosecco 清口。愛爾蘭酒吧必須熟記！",done:false},
+
+// ── SIDECAR ──
+{en:"Sidecar",zh:"側車",f:"SI",s:["Cognac"],m:"Shake",g:"Coupe",
+r:["50ml Cognac","20ml Cointreau","20ml Fresh Lemon Juice"],
+fl:["橙","酸","甜","優雅"],
+brand:"Cognac 推薦 Rémy Martin VSOP 或 Hennessy VS。Cointreau 是標準（純橙香，40%），避免廉價 Triple Sec。",
+hist:"1920年代巴黎，Harry MacElhone（Harry's New York Bar）或 Frank Meier（Ritz Hotel）各自宣稱發明。以一戰時期軍官常乘坐的摩托車側車命名。",
+n:"家族原型：烈酒＋橙酒（Cointreau/Triple Sec）＋酸（柑橘汁）。所有 Sidecar 家族變形都在此結構上替換基酒。",done:true},
+
+{en:"Cosmopolitan",zh:"柯夢波丹",f:"SI",s:["Vodka"],m:"Shake",g:"Martini",
+r:["37.5ml Citrus Vodka","12.5ml Cointreau","18.75ml Fresh Lime Juice","7.5ml Cranberry Juice","Lemon peel（裝飾）"],
+fl:["橙","蔓越莓","酸","甜"],
+brand:"Citrus Vodka 推薦 Absolut Citron（最經典）。Cointreau 而非廉價 Triple Sec。蔓越莓汁只需少量提供顏色。",
+hist:"Dale DeGroff 1988年在紐約 Rainbow Room 推廣。《慾望城市》Carrie Bradshaw 喝 Cosmo 成為文化圖騰，讓這款酒全球爆紅。",
+n:"Sidecar 換 Citrus Vodka，加入蔓越莓汁。顏色是社交場合的重要賣點。",done:true},
+
+{en:"White Lady",zh:"白衣女郎",f:"SI",s:["Gin"],m:"Shake",g:"Coupe",
+r:["50ml Gin","20ml Cointreau","20ml Fresh Lemon Juice","（可選）Egg White ½ 個"],
+fl:["草本","橙","酸","清爽"],
+brand:"Gin 推薦 London Dry（Tanqueray、Beefeater）。加蛋白版（½ Egg White）在英國更常見。",
+hist:"Harry MacElhone 1919年創作，原版用 Crème de Menthe，後改為 Gin 版成為經典。",
+n:"Sidecar 換 Gin。加蛋白讓口感更圓潤。",done:false},
+
+{en:"Aviation",zh:"飛行",f:"SI",s:["Gin"],m:"Shake",g:"Coupe",
+r:["50ml Gin","12.5ml Maraschino Liqueur","7.5ml Crème de Violette","20ml Fresh Lemon Juice"],
+fl:["紫羅蘭","花香","甜","酸"],
+brand:"Crème de Violette 推薦 Rothman & Winter（最佳顏色和香氣）。Maraschino 推薦 Luxardo。Gin 推薦 London Dry。",
+hist:"Hugo Ensslin 1916年著作首次收錄。Crème de Violette 在美國消失幾十年，2007年 Rothman & Winter 重新進口後原始版本得以復興。",
+n:"Crème de Violette 帶來天空藍紫色，省略後就變成另一款酒了。",done:false},
+
+{en:"Corpse Reviver No.2",zh:"還魂二號",f:"SI",s:["Gin"],m:"Shake",g:"Coupe",
+r:["18.75ml Gin","18.75ml Cointreau","18.75ml Lillet Blanc","18.75ml Fresh Lemon Juice","Absinthe rinse（約 5ml）"],
+fl:["橙","酸","茴香","草本"],
+brand:"Lillet Blanc 是法國加烈白酒，花香蜜甜。Absinthe 推薦 Pernod 或 Absente。",
+hist:"Harry Craddock《The Savoy Cocktail Book》（1930）收錄，附名句：「四杯下去，死人也能復活。」",
+n:"Absinthe rinse 帶來茴香尾韻，1:1:1:1 等比例結構。",done:false},
+
+{en:"Naked & Famous",zh:"裸體與名聲",f:"SI",s:["Mezcal"],m:"Shake",g:"Coupe",
+r:["18.75ml Mezcal","18.75ml Aperol","18.75ml Yellow Chartreuse","18.75ml Fresh Lime Juice"],
+fl:["煙燻","橙","草本","酸"],
+brand:"Mezcal 推薦 Del Maguey Vida（煙燻適中）。Yellow Chartreuse（43%）比 Green 更甜更柔和。",
+hist:"2011年紐約 Death & Co，Joaquín Simó 創作。Last Word 的 Mezcal 現代版。",
+n:"1:1:1:1 結構。Mezcal 煙燻感和 Aperol 苦橙、Chartreuse 草本形成三層複雜度。",done:false},
+
+{en:"Tommy's Margarita",zh:"湯米的瑪格麗特",f:"SI",s:["Tequila"],m:"Shake",g:"Rocks",
+r:["50ml Tequila Blanco","25ml Fresh Lime Juice","18.75ml Agave Syrup"],
+fl:["龍舌蘭","酸","甜","乾淨"],
+brand:"Tequila 推薦 100% Agave Blanco：Olmeca Altos、Fortaleza Blanco。Agave Syrup 1:1（龍舌蘭糖漿）。",
+hist:"1990年代舊金山 Tommy's Mexican Restaurant，Julio Bermejo 創作。2006年被 IBA 列為官方標準。",
+n:"去掉 Triple Sec，Agave Syrup 代替，突出 Tequila 本身。是對 Tequila 品質要求最高的 Margarita 版本。",done:false},
+
+{en:"Paper Plane",zh:"紙飛機",f:"SI",s:["Bourbon"],m:"Shake",g:"Coupe",
+r:["18.75ml Bourbon","18.75ml Aperol","18.75ml Amaro Nonino","18.75ml Fresh Lemon Juice"],
+fl:["橙苦","草本","木質","酸"],
+brand:"Amaro Nonino Quintessentia 是這款酒的靈魂，無法替換。Bourbon 推薦 Wild Turkey 101 或 Four Roses。",
+hist:"2007年 Sam Ross（Milk & Honey，紐約）創作，以 M.I.A. 歌曲《Paper Planes》命名。Last Word 結構的現代 Bourbon 版。",
+n:"1:1:1:1，四種材料各司其職：Bourbon（骨架）、Aperol（苦橙）、Nonino（草本甜苦）、Lemon（酸）。",done:false},
+
+{en:"Penicillin",zh:"盤尼西林",f:"SI",s:["Blended Scotch","Islay Scotch"],m:"Shake",g:"Rocks",
+r:["50ml Blended Scotch","20ml Fresh Lemon Juice","20ml Honey-Ginger Syrup","7.5ml Islay Scotch（float）"],
+fl:["煙燻","蜂蜜","薑辣","酸"],
+brand:"基底：Famous Grouse 或 Monkey Shoulder（柔和平衡）。Islay float：Laphroaig 10 或 Ardbeg（強煙燻泥煤）。Honey-Ginger Syrup 需自製：薑汁＋蜂蜜＋熱水。",
+hist:"2005年紐約 Milk & Honey，Sam Ross 創作。以青黴素命名，暗示「治癒一切的效果」。是 21 世紀最重要的現代經典，重新定義 Scotch 調酒的可能性。",
+n:"Islay Scotch 最後 float 在表面——煙燻香氣第一口就衝出，但喝下去是蜂蜜薑辣。視覺和風味的雙重層次。蜂蜜薑糖漿需提前製作。",done:false},
+
+{en:"Bramble",zh:"荊棘",f:"SI",s:["Gin"],m:"Shake+Build",g:"Rocks（碎冰）",
+r:["50ml Gin","20ml Fresh Lemon Juice","12.5ml Simple Syrup","12.5ml Crème de Mûre（drizzle）"],
+fl:["黑莓","草本","酸","甜"],
+brand:"Crème de Mûre 是黑莓利口酒，推薦 Briottet 或 Giffard。Gin 推薦 Gordon's（原版）或 London Dry。碎冰是必要的。",
+hist:"1984年倫敦 Fred's Club，Dick Bradsell 創作。靈感來自英國鄉村童年採黑莓的記憶。被稱為「英國國民雞尾酒」。",
+n:"Shake 後倒入裝滿碎冰的杯子，Crème de Mûre drizzle 在碎冰表面自然下沉，形成漸層。不要攪拌。",done:false},
+
+{en:"Between the Sheets",zh:"床單之間",f:"SI",s:["White Rum","Cognac"],m:"Shake",g:"Coupe",
+r:["25ml White Rum","25ml Cognac","25ml Cointreau","7.5ml Fresh Lemon Juice"],
+fl:["橙","甜","複雜","圓潤"],
+brand:"Rum 推薦 Bacardi Superior。Cognac 推薦 Hennessy VS。",
+hist:"1930年代巴黎 Harry's New York Bar，以挑逗性名字吸引顧客，是當時風格的體現。",
+n:"Sidecar 加 Rum，雙基酒增加甜度和複雜度，比純 Cognac 版更圓潤易飲。",done:false},
+
+{en:"Balalaika",zh:"三弦琴",f:"SI",s:["Vodka"],m:"Shake",g:"Coupe",
+r:["37.5ml Vodka","18.75ml Cointreau","18.75ml Fresh Lemon Juice"],
+fl:["橙","酸","清爽"],
+brand:"Vodka 推薦清爽中性款：Ketel One 或 Absolut。Cointreau 標準。",
+hist:"1930-40年代歐洲流行。以俄羅斯民族樂器三角琴命名。Cosmopolitan 的前身。",
+n:"結構最乾淨，展示 Vodka 最純粹的面貌。",done:false},
+
+// ── HIGHBALL ──
+{en:"Whisky Highball",zh:"高球",f:"HI",s:["Whisky"],m:"Build",g:"Highball",
+r:["50ml Whisky","150ml Chilled Soda Water"],
+fl:["輕盈","清爽","穀物"],
+brand:"日式 Highball（三得利角瓶）是目前最有影響力的版本，要求超冰杯、超冰酒、只攪拌 1-2 次。Scotch、Bourbon、Irish Whiskey 都可以做。",
+hist:"19世紀英國發明。日本 1950 年代三得利大力推廣，現在是日本居酒屋文化的核心飲品。",
+n:"保留氣泡是技術重點：杯要夠冷、Soda 冰鎮過、倒入後少攪拌。1:3 是標準比例。",done:true},
+
+{en:"Gin & Tonic",zh:"琴湯尼",f:"HI",s:["Gin"],m:"Build",g:"Highball",
+r:["50ml Gin","150ml Tonic Water","Lime Wedge"],
+fl:["草本","苦","清爽","柑橘"],
+brand:"Gin：London Dry（Tanqueray、Beefeater）最經典；精品 Gin 配精品 Tonic 展示複雜度。Tonic 推薦 Fever-Tree、Thomas Henry 或 1724。",
+hist:"19世紀英國殖民地印度，英國士兵用奎寧（Tonic Water 的苦味來源）預防瘧疾，加 Gin 掩蓋苦味。西班牙「Gin Tonic」文化 2000 年代引發全球 Gin 復興浪潮。",
+n:"冷杯、冷 Gin、最後加 Tonic——順序影響氣泡保留。Gin 種類配對正確的 Tonic 是現代 G&T 的學問。",done:true},
+
+{en:"Moscow Mule",zh:"莫斯科騾子",f:"HI",s:["Vodka"],m:"Build",g:"Copper Mug",
+r:["50ml Vodka","12.5ml Fresh Lime Juice","120ml Ginger Beer","Lime Wedge"],
+fl:["薑辣","酸","清爽"],
+brand:"Ginger Beer（薑釀，有薑辣感）≠ Ginger Ale（薑汁汽水，甜無辣）——絕對不能混用。推薦 Fever-Tree Ginger Beer 或 Bundaberg。銅杯是傳統但不影響風味。",
+hist:"1941年洛杉磯，Smirnoff Vodka 和 Ginger Beer 廠商合作行銷創作。是 Vodka 在美國普及的關鍵推手。",
+n:"Ginger Beer 品質直接影響成品。Lime 用現榨。",done:true},
+
+{en:"Dark & Stormy",zh:"黑暗風暴",f:"HI",s:["Dark Rum"],m:"Build",g:"Highball",
+r:["50ml Dark Rum","120ml Ginger Beer","Lime Wedge"],
+fl:["薑辣","糖蜜","清爽","深邃"],
+brand:"Gosling's Black Seal（百慕達）是商標款。",
+hist:"百慕達皇家海軍俱樂部，百年歷史。是百慕達的國民調酒。",
+n:"Moscow Mule 換成 Dark Rum。可以做 Float：先加 Ginger Beer，再輕倒 Rum 在表面。",done:false},
+
+{en:"Paloma",zh:"帕洛瑪",f:"HI",s:["Tequila"],m:"Build",g:"Highball",
+r:["50ml Tequila Blanco","12.5ml Fresh Lime Juice","120ml Grapefruit Soda","Salt Rim"],
+fl:["葡萄柚","龍舌蘭","酸","清爽"],
+brand:"Grapefruit Soda 推薦 Jarritos Toronja（墨西哥原版）或 Fever-Tree Grapefruit。",
+hist:"起源不明，1950-60年代墨西哥。Paloma 西班牙文為「鴿子」。在墨西哥比 Margarita 更日常。",
+n:"墨西哥最受歡迎的 Tequila 飲品（當地銷量遠超 Margarita）。Salt rim 是傳統。",done:false},
+
+{en:"Tom Collins",zh:"湯姆可林",f:"HI",s:["Gin"],m:"Build",g:"Collins",
+r:["50ml Gin","25ml Fresh Lemon Juice","18.75ml Simple Syrup","Soda Water（fill）","Lemon slice + Cherry（裝飾）"],
+fl:["草本","酸","甜","氣泡"],
+brand:"Gin：Old Tom Gin（Hayman's Old Tom）是傳統選擇，比 London Dry 更甜更柔和。",
+hist:"19世紀英國，以 Old Tom Gin 命名。1876年美國的「Tom Collins Hoax」讓它在美國爆紅。",
+n:"Sour（烈酒＋酸＋甜）加 Soda = Collins 家族公式。John Collins = Bourbon 版。",done:true},
+
+{en:"Vodka Lime & Soda",zh:"伏特加萊姆蘇打",f:"HI",s:["Vodka"],m:"Build",g:"Highball",
+r:["50ml Vodka","12.5ml Lime Cordial 或 Fresh Lime Juice","Soda Water（fill）"],
+fl:["清爽","輕盈","酸"],
+brand:"Lime Cordial（Rose's）是英/愛爾蘭傳統；現鮮萊姆汁更清爽。愛爾蘭酒吧常見 Cordial 版（更甜）。",
+hist:"英國和愛爾蘭酒吧文化基本款，是「driver's drink」的低酒精版本。",
+n:"愛爾蘭酒吧極高點單率。快速、簡單、利潤高。熟記 Lime Cordial 和新鮮萊姆兩種版本的差異，客人有時會指定。",done:true},
+
+{en:"Mojito",zh:"莫希托",f:"HI",s:["White Rum"],m:"Build",g:"Highball",
+r:["50ml White Rum","25ml Fresh Lime Juice","18.75ml Simple Syrup","8-10 Mint Leaves","Soda Water（fill）","Mint sprig（裝飾）"],
+fl:["薄荷","酸","甜","清爽"],
+brand:"Rum 推薦 Bacardi Superior 或 Havana Club 3（古巴原版）。薄荷用 Spearmint（留蘭香）而非 Peppermint（胡椒薄荷，太刺激）。",
+hist:"古巴哈瓦那，16世紀已有類似飲品。El Floridita 和 La Bodeguita del Medio（海明威常去）是哈瓦那的 Mojito 聖地。",
+n:"薄荷輕拍（slap）不搗碎——搗碎葉片釋放苦味。加碎冰逐層建構。Soda 最後從杯緣輕倒。",done:true},
+
+{en:"Aperol Spritz",zh:"阿佩羅氣泡",f:"HI",s:["Prosecco","Aperol"],m:"Build",g:"Wine Glass（大）",
+r:["90ml Prosecco Brut","60ml Aperol","30ml Soda Water","Orange Slice（裝飾）","Olive（可選）"],
+fl:["橙苦","氣泡","甜","輕盈"],
+brand:"Aperol（11% ABV，橙色，甜苦）。Prosecco 推薦 Brut 等級（不要 Extra Dry，太甜）。3:2:1 是 Aperol 官方比例。",
+hist:"威尼斯 Veneto 地區傳統飲品，Aperol 1919年發明。2010年代全球爆紅，成為歐洲最受歡迎的餐前酒。",
+n:"先倒 Prosecco 保留氣泡，再倒 Aperol，最後加 Soda。橙片和橄欖裝飾是標準。",done:true},
+
+{en:"French 75",zh:"法式七五",f:"HI",s:["Gin"],m:"Shake+Build",g:"Flute",
+r:["37.5ml Gin","12.5ml Fresh Lemon Juice","12.5ml Simple Syrup","75ml Champagne Brut","Lemon peel（裝飾）"],
+fl:["草本","酸","甜","氣泡","優雅"],
+brand:"Gin 推薦 London Dry（Tanqueray、Beefeater）。Champagne 推薦 Brut NV（Moët、Perrier-Jouët）。Cognac 版（法國傳統）同樣存在。",
+hist:"一戰時期（1915年），Harry MacElhone 在巴黎創作，以法國 75mm 野戰炮命名（威力強大）。",
+n:"先 Shake Gin＋Lemon＋Simple Syrup，濾入笛型杯，最後加 Champagne（Champagne 不可搖！）。",done:false},
+
+{en:"Espresso Martini",zh:"濃縮咖啡馬丁尼",f:"HI",s:["Vodka"],m:"Shake",g:"Martini",
+r:["37.5ml Vodka","25ml Kahlúa","25ml Fresh Espresso","3 Coffee Beans（裝飾）"],
+fl:["咖啡","甜","微苦","濃郁"],
+brand:"Espresso 必須是剛打的熱濃縮（才有 crema，產生泡沫）。Kahlúa 是標準。Vodka 推薦 Absolut 或 Ketel One。",
+hist:"1983年倫敦，Dick Bradsell 為一位模特兒應要求調製（她說「我要一杯讓我清醒又讓我醉的飲料」）。是愛爾蘭和英國酒吧點單率最高的調酒之一。",
+n:"Hard Shake 打出 crema 泡沫，三顆咖啡豆裝飾是標準。泡沫薄厚是品質指標。愛爾蘭酒吧必須熟記！",done:false},
+
+{en:"Hugo Spritz",zh:"雨果氣泡",f:"HI",s:["Prosecco"],m:"Build",g:"Wine Glass（大）",
+r:["90ml Prosecco Brut","25ml Elderflower Cordial","30ml Soda Water","Mint Leaves","Lime Slice"],
+fl:["接骨木花","花香","甜","氣泡","清爽"],
+brand:"Elderflower Cordial 推薦 Monin Elderflower 或 St-Germain（接骨木花利口酒，更優雅）。",
+hist:"2005年義大利北部 Trentino-Alto Adige，Roland Gruber 創作。是 Aperol Spritz 的花香版替代。",
+n:"比 Aperol Spritz 更甜、更花香、更輕盈。在不想喝苦味的客人群中很受歡迎。愛爾蘭餐廳和咖啡館常見。",done:false},
+
+{en:"Harvey Wallbanger",zh:"哈維撞牆",f:"HI",s:["Vodka"],m:"Build",g:"Highball",
+r:["37.5ml Vodka","100ml Fresh Orange Juice","12.5ml Galliano（float）"],
+fl:["橙","茴香","甜","清爽"],
+brand:"Galliano L'Autentico 是義大利草本香草利口酒（高瓶身），無法替換——它是這款酒的靈魂。",
+hist:"1952年洛杉磯，Donato 'Duke' Antone 創作。以一個叫 Harvey 的衝浪者命名。1970年代 Galliano 品牌大力行銷使其成為那個年代的標誌性調酒。",
+n:"Screwdriver（Vodka＋OJ）加 Galliano float。Galliano 浮在表面帶來茴香草本香氣。",done:false},
+
+{en:"Sex on the Beach",zh:"性感海灘",f:"HI",s:["Vodka"],m:"Build",g:"Highball",
+r:["37.5ml Vodka","12.5ml Peach Schnapps","50ml Orange Juice","50ml Cranberry Juice"],
+fl:["果香","甜","蔓越莓","桃子"],
+brand:"Peach Schnapps 推薦 DeKuyper Peachtree 或 Archers。",
+hist:"1987年佛羅里達，Ted Pizio 在雞尾酒比賽中創作。挑逗性名字是行銷策略。",
+n:"",done:true},
+
+{en:"Tequila Sunrise",zh:"特吉拉日出",f:"HI",s:["Tequila"],m:"Build",g:"Highball",
+r:["50ml Tequila Blanco","100ml Fresh Orange Juice","12.5ml Grenadine（沉底）"],
+fl:["橙","甜","石榴","漸層"],
+brand:"Grenadine 推薦 Monin 或自製（石榴汁＋糖）。避免人工色素版本。",
+hist:"1970年代，Bobby Lozoff 和 Billy Harper 創作。The Eagles 巡演和 Mick Jagger 生日派對後名聲大噪。",
+n:"Grenadine 最後沿杯邊緩慢倒入沉底（不攪拌）——製造紅橙漸層如日出。",done:true},
+
+{en:"Singapore Sling",zh:"新加坡司令",f:"HI",s:["Gin"],m:"Shake+Build",g:"Sling",
+r:["37.5ml Gin","12.5ml Cherry Heering","7.5ml Cointreau","7.5ml Bénédictine","50ml Pineapple Juice","12.5ml Fresh Lime Juice","1 dash Angostura Bitters","Soda Water（fill）"],
+fl:["甜","複雜","熱帶","草本"],
+brand:"Cherry Heering 是丹麥櫻桃利口酒，不可替換。Bénédictine 是法國修道院草本利口酒，同樣不可替換。",
+hist:"1915年新加坡 Raffles Hotel Long Bar，Ngiam Tong Boon 創作。原始配方已失傳，現行版本是 1970 年代重建的。",
+n:"結構是 Gin Sour 加氣泡加多種香甜酒。先 Shake 烈酒部分，再 Build 加 Soda。",done:true},
+
+{en:"Long Island Iced Tea",zh:"長島冰茶",f:"HI",s:["Vodka","Rum","Gin","Tequila"],m:"Build",g:"Collins",
+r:["12.5ml Vodka","12.5ml White Rum","12.5ml Gin","12.5ml Tequila Blanco","12.5ml Cointreau","18.75ml Fresh Lemon Juice","Cola（fill）","Lemon Wedge（裝飾）"],
+fl:["複雜","酸","甜","可樂"],
+brand:"五種烈酒各 12.5ml（½ single）。Cola 推薦 Coca-Cola。Cointreau 品質更好。",
+hist:"1970年代紐約長島，Robert Butt 在 Oak Beach Inn 創作。命名原因：顏色像冰茶。酒精濃度相當於 3-4 杯一般調酒。",
+n:"五種烈酒，Lemon Juice 整合風味。酒精濃度很高，要告知客人。",done:true},
+
+{en:"Kir Royale",zh:"皇家基爾",f:"HI",s:["Champagne"],m:"Build",g:"Flute",
+r:["100ml Champagne Brut","12.5ml Crème de Cassis"],
+fl:["黑醋栗","氣泡","甜","優雅"],
+brand:"Crème de Cassis 推薦 Briottet 或 Lejay（法國勃艮第正宗）。普通版（Kir）用 White Wine 代替 Champagne。",
+hist:"二戰後法國 Dijon 市長 Félix Kir 在外交場合推廣本地白葡萄酒加 Cassis，並以他命名。",
+n:"先倒 Crème de Cassis，再倒 Champagne，自然混合不需攪拌。",done:true},
+
+// ── FLIP ──
+{en:"New York Sour",zh:"紐約酸酒",f:"FL",s:["Bourbon"],m:"Shake+Float",g:"Rocks",
+r:["50ml Bourbon","20ml Fresh Lemon Juice","20ml Simple Syrup","Egg White 1 個","12.5ml Red Wine（float）"],
+fl:["木質","酸","果香","綿密"],
+brand:"Red Wine 推薦 Shiraz 或 Malbec（果味濃、顏色深，float 效果好）。Bourbon 推薦 Bulleit 或 Maker's Mark。",
+hist:"1870年代美國，原名 Continental Sour。1980年代重新流行後以紐約命名。",
+n:"先 Dry Shake（蛋白），再加冰 Shake，最後用吧匙背面輕倒 Red Wine float。分層是視覺重點。",done:true},
+
+{en:"Pina Colada",zh:"鳳梨可樂達",f:"FL",s:["White Rum"],m:"Blend/Shake",g:"Hurricane",
+r:["50ml White Rum","37.5ml Coconut Cream","50ml Pineapple Juice","Pineapple + Cherry（裝飾）"],
+fl:["椰子","鳳梨","甜","熱帶"],
+brand:"Coconut Cream（高脂濃稠）≠ Coconut Milk ≠ Coconut Water。推薦 Coco López。Rum 推薦 Bacardi Superior 或 Don Q。",
+hist:"1954年聖胡安 Caribe Hilton，Ramón Monchito Marrero 花三個月實驗創作。1978年波多黎各宣布為官方國飲。",
+n:"Blend 版是 Tiki 吧傳統；Shake 版在一般酒吧更常見。Coconut Cream 是質地核心。",done:true},
+
+{en:"Brandy Alexander",zh:"白蘭地亞歷山大",f:"FL",s:["Cognac"],m:"Shake",g:"Coupe",
+r:["37.5ml Cognac","25ml Dark Crème de Cacao","25ml Heavy Cream","Grated Nutmeg（裝飾）"],
+fl:["巧克力","濃郁","甜","奶香"],
+brand:"Dark Crème de Cacao 推薦 Marie Brizard 或 Giffard。Cognac 推薦 Hennessy VS。Heavy Cream 乳脂 35%以上。",
+hist:"1920年代，Alexander cocktail（Gin 版）的進化版，用 Cognac 替換。John Lennon 自稱「醉在 Brandy Alexander 裡」18個月。",
+n:"肉豆蔻（nutmeg）磨粉灑在泡沫上是傳統裝飾。Flip 家族奶油版，無蛋但含 Cream。",done:true},
+
+{en:"White Russian",zh:"白色俄羅斯",f:"FL",s:["Vodka"],m:"Build",g:"Rocks",
+r:["50ml Vodka","25ml Kahlúa","25ml Heavy Cream（float）"],
+fl:["咖啡","奶香","甜","濃郁"],
+brand:"Kahlúa 標準。Heavy Cream 用鮮奶油（比牛奶更濃郁）。",
+hist:"比 Black Russian 晚約 20 年（1960年代末）出現。電影《謀殺綠腳趾》（The Big Lebowski，1998）The Dude 幾乎只喝這款。",
+n:"Cream float 在表面，客人喝下去自然混合。不要預先攪拌。",done:true},
+
+{en:"Irish Coffee",zh:"愛爾蘭咖啡",f:"FL",s:["Irish Whiskey"],m:"Build",g:"Irish Coffee Glass",
+r:["37.5ml Irish Whiskey","1 tsp Brown Sugar","100ml Hot Black Coffee","Heavy Cream（float，約 25ml）"],
+fl:["咖啡","奶香","甜","溫暖"],
+brand:"Irish Whiskey 推薦 Jameson（最標準）、Tullamore D.E.W.、Bushmills。Whipped Cream 打到半硬，輕輕浮在咖啡上。正宗版用砂糖不用糖漿。",
+hist:"1943年愛爾蘭 Foynes Airport，廚師 Joe Sheridan 為返航的美國旅客創作。1952年舊金山 Buena Vista Café 的 Jack Koeppler 帶回美國標準化。Shannon Airport（Foynes 後繼）至今仍是朝聖地。",
+n:"愛爾蘭酒吧必備！Cream 用湯匙背面緩緩倒在咖啡表面，要「透過 Cream 喝咖啡」才是正確體驗。玻璃杯事先溫杯（熱水沖過）。",done:true},
+
+{en:"Ramos Gin Fizz",zh:"拉摩琴費茲",f:"FL",s:["Gin"],m:"Shake（長搖）",g:"Collins",
+r:["50ml Gin","12.5ml Fresh Lemon Juice","12.5ml Fresh Lime Juice","25ml Simple Syrup","Egg White 1 個","50ml Heavy Cream","3 dash Orange Flower Water","Soda Water（finish）"],
+fl:["柑橘","花香","奶香","綿密"],
+brand:"Orange Flower Water 推薦 Fee Brothers 或 Cortas。Gin 推薦 London Dry。Heavy Cream 乳脂 35% 以上。",
+hist:"1888年新奧良 Imperial Cabinet Saloon，Henry C. Ramos 創作。禁酒令前 Mardi Gras 期間雇用 35 名搖酒師輪班。傳說需搖 12 分鐘以上。",
+n:"需要超長 Shake（至少 5 分鐘，傳統 12 分鐘）讓蛋白、Cream 和 OFW 完全乳化。Soda 最後從杯邊輕倒，讓泡沫升起超過杯口。是最費力的經典調酒。",done:true},
+
+{en:"Mai Tai",zh:"邁泰",f:"FL",s:["Aged Rum"],m:"Shake",g:"Rocks/Tiki",
+r:["50ml Aged Rum","12.5ml Orange Curaçao","7.5ml Orgeat","18.75ml Fresh Lime Juice","7.5ml Simple Syrup","Mint Sprig + Lime Shell（裝飾）"],
+fl:["熱帶","杏仁","橙","深邃"],
+brand:"Rum：推薦 Appleton Estate 12 或兩種 Rum 混合（Rhum Agricole＋Dark Jamaica Rum）。Orgeat（杏仁糖漿）推薦 Monin 或自製，不可用 Simple Syrup 替換。",
+hist:"1944年加州 Oakland，Trader Vic（Victor Bergeron）用 17 年牙買加 Rum 創作。大溪地朋友說「Mai Tai—Roa Ae！」（超出這個世界）。與 Don the Beachcomber（Donn Beach）有發明權爭議。",
+n:"Orgeat 的杏仁甜香是靈魂，第一口就知道有沒有放。薄荷叢和萊姆殼裝飾是 Tiki 傳統。",done:true},
+
+{en:"Tiramisu Cocktail",zh:"提拉米蘇調酒",f:"FL",s:["Vodka","Kahlúa"],m:"Shake",g:"Coupe",
+r:["25ml Vodka","25ml Kahlúa","25ml Baileys Irish Cream","25ml Fresh Espresso","Cocoa Powder（裝飾）"],
+fl:["咖啡","奶香","巧克力","甜"],
+brand:"Baileys Irish Cream 是必要材料（愛爾蘭奶油利口酒，無替代品）。Kahlúa 標準。Espresso 剛打。",
+hist:"靈感來自義大利甜點 Tiramisu（義大利文「讓我振作」）。在愛爾蘭和英國的主題酒吧和餐廳非常受歡迎。",
+n:"Dry Shake 先讓 Baileys 打發。可可粉過篩灑在泡沫上模仿提拉米蘇外觀。",done:true},
+
+{en:"Jungle Bird",zh:"叢林鳥",f:"FL",s:["Dark Rum"],m:"Shake",g:"Rocks/Tiki",
+r:["37.5ml Dark Rum","18.75ml Campari","37.5ml Pineapple Juice","12.5ml Fresh Lime Juice","12.5ml Simple Syrup"],
+fl:["苦","熱帶","鳳梨","深邃"],
+brand:"Dark Rum 推薦 Appleton Estate 12 或 Gosling's Black Seal。Campari 的苦感是關鍵，無替換。",
+hist:"1978年吉隆坡 Kuala Lumpur Hilton Aviary Bar 創作。亞洲 Tiki 文化代表作。被遺忘 30 年後，2009 年由 Dave Wondrich 重新介紹爆紅。",
+n:"Rum 和 Campari 的罕見組合。鳳梨熱帶甜感軟化了 Campari 的苦，Rum 的糖蜜加深複雜度。",done:false},
+
+{en:"Classic Flip",zh:"菲利普（經典）",f:"FL",s:["Any Spirit"],m:"Shake",g:"Coupe",
+r:["50ml Spirit","18.75ml Simple Syrup","1 whole Egg","Grated Nutmeg（裝飾）"],
+fl:["濃郁","絲滑","甜"],
+brand:"任何基酒均可。Sherry Flip（Fino Sherry）、Bourbon Flip、Port Flip 都是常見版本。",
+hist:"17-18世紀英國船員在冬天加熱啤酒加糖和蛋，用燒紅的鐵棒攪拌（flip）製作熱飲。是現代含蛋調酒的祖先。",
+n:"Dry Shake 先（不加冰搖 15 秒），再加冰 Shake。全蛋帶來比只用蛋白更濃郁的質地。",done:false}
+];
+
+// ── STORAGE ──
+var SK='erus_v3';
+function loadState(){try{return JSON.parse(localStorage.getItem(SK)||'{}');}catch(e){return{};}}
+function saveState(){try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}}
+var ST=loadState();
+if(!ST.overrides)ST.overrides={};
+if(!ST.deleted)ST.deleted=[];
+if(!ST.custom)ST.custom=[];
+
+function buildAll(){
+  var arr=[];
+  BASE.forEach(function(c,i){
+    if(ST.deleted.indexOf('b'+i)>=0)return;
+    var m=Object.assign({},c,ST.overrides['b'+i]||{});
+    m._id='b'+i;arr.push(m);
+  });
+  ST.custom.forEach(function(c,i){
+    if(ST.deleted.indexOf('c'+i)>=0)return;
+    var m=Object.assign({},c,ST.overrides['c'+i]||{});
+    m._id='c'+i;arr.push(m);
+  });
+  return arr;
+}
+
+var ALL=buildAll();
+var curFam='ALL',filtered=ALL.slice(),fList=ALL.slice(),fIdx=0,fShown=false,curId=null;
+
+function updateHeader(){
+  var cu=ST.custom.filter(function(_,i){return ST.deleted.indexOf('c'+i)<0;}).length;
+  document.getElementById('hdrcount').textContent=ALL.length+' recipes'+(cu?' · '+cu+' custom':'');
+}
+
+// ── FILTER ──
+function setFam(x){
+  curFam=x;
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});
+  var s=document.querySelector('.f-'+x);if(s)s.classList.add('active');
+  doFilter();
+}
+function doFilter(){
+  var q=document.getElementById('sinput').value.toLowerCase();
+  filtered=ALL.filter(function(c){
+    var fok=curFam==='ALL'||c.f===curFam;
+    var qok=!q||[c.en,c.zh,(c.s||[]).join(' '),(c.r||[]).join(' '),(c.fl||[]).join(' '),c.n||'',c.brand||'',c.hist||''].some(function(t){return t.toLowerCase().indexOf(q)>=0;});
+    return fok&&qok;
+  });
+  document.getElementById('rcount').textContent=filtered.length+' 款';
+  document.getElementById('clist').innerHTML=filtered.map(function(c){
+    var isC=c._id.charAt(0)==='c';
+    return '<div class="ci" onclick="openModal(\''+c._id+'\')">'+
+      '<div class="cdot d-'+c.f+'"></div>'+
+      '<div class="cinfo">'+
+        '<div class="cen">'+c.en+'</div>'+
+        '<div class="czh">'+c.zh+(isC?' <span style="font-size:9px;color:#9a9288">✦</span>':'')+'</div>'+
+        '<div class="ctags">'+
+          (c.s||[]).slice(0,2).map(function(x){return '<span class="tag">'+x+'</span>';}).join('')+
+          (c.fl||[]).slice(0,2).map(function(x){return '<span class="tag">'+x+'</span>';}).join('')+
+        '</div>'+
+      '</div>'+
+      '<div class="cright"><div class="cmeth">'+c.m+'</div>'+(c.done?'<div class="cdone">✓ 做過</div>':'')+'<div class="cchev">›</div></div>'+
+    '</div>';
+  }).join('');
+  fList=filtered.slice();fIdx=0;
+  if(document.getElementById('fview').style.display!=='none')renderFlash();
+}
+
+// ── MODAL ──
+function getC(id){return ALL.filter(function(c){return c._id===id;})[0]||null;}
+function openModal(id){
+  var c=getC(id);if(!c)return;
+  curId=id;
+  var fm=FC[c.f]||FC.CU;
+  var html='<div class="mhead"><div class="mfam-label" style="color:'+fm.c+'">'+fm.l+' Family</div>'+
+    '<div class="men-title">'+c.en+'</div>'+
+    '<div class="mzh-title">'+c.zh+'</div>'+
+    (c.done?'<div class="mdone-badge">✓ 上課做過</div>':'')+
+  '</div><div class="mbody">';
+  // Recipe
+  html+='<div class="msec"><div class="mlbl">配方</div><div class="rlines">'+(c.r||[]).map(function(r){
+    var m=r.match(/^(\d+(?:\.\d+)?ml|[¼½¾\d]+\s*tsp|[¼½¾\d]+\s*dash)\s+(.+)$/i);
+    return m?'<div class="rline"><span class="ramt">'+m[1]+'</span>'+m[2]+'</div>':'<div class="rline">'+r+'</div>';
+  }).join('')+'</div></div>';
+  // Meta
+  html+='<div class="msec"><div class="mlbl">基本資訊</div><div class="mgrid">'+
+    '<div class="mcell"><span class="lbl">技法</span><span class="val">'+c.m+'</span></div>'+
+    '<div class="mcell"><span class="lbl">杯型</span><span class="val">'+c.g+'</span></div>'+
+    '<div class="mcell"><span class="lbl">基酒</span><span class="val">'+(c.s||[]).join(', ')+'</span></div>'+
+    '<div class="mcell"><span class="lbl">原型</span><span class="val">'+fm.l+'</span></div>'+
+  '</div></div>';
+  // Flavor
+  if(c.fl&&c.fl.length)html+='<div class="msec"><div class="mlbl">風味</div><div class="ftags">'+(c.fl||[]).map(function(x){return '<span class="fchip">'+x+'</span>';}).join('')+'</div></div>';
+  if(c.brand)html+='<div class="msec"><div class="mlbl">🍾 廠牌 / 種類建議</div><div class="sbox sbox-brand">'+c.brand+'</div></div>';
+  if(c.hist)html+='<div class="msec"><div class="mlbl">📜 歷史根源</div><div class="sbox sbox-hist">'+c.hist+'</div></div>';
+  if(c.n)html+='<div class="msec"><div class="mlbl">📝 重點筆記</div><div class="sbox sbox-note">'+c.n+'</div></div>';
+  html+='</div>';
+  document.getElementById('mcontent').innerHTML=html;
+  document.getElementById('mbg').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){document.getElementById('mbg').classList.remove('open');document.body.style.overflow='';curId=null;}
+function tryCloseM(e){if(e.target===document.getElementById('mbg'))closeModal();}
+
+// ── EDIT ──
+function openEdit(){
+  var c=getC(curId);if(!c)return;
+  document.getElementById('edit-sub').textContent=c.en;
+  document.getElementById('e-en').value=c.en||'';
+  document.getElementById('e-zh').value=c.zh||'';
+  document.getElementById('e-fam').value=c.f||'CU';
+  var ms=document.getElementById('e-meth');
+  var found=false;
+  for(var i=0;i<ms.options.length;i++){if(ms.options[i].value===c.m){ms.selectedIndex=i;found=true;break;}}
+  if(!found){var o=document.createElement('option');o.value=c.m;o.text=c.m;ms.appendChild(o);ms.value=c.m;}
+  document.getElementById('e-glass').value=c.g||'';
+  document.getElementById('e-spirit').value=(c.s||[]).join(', ');
+  document.getElementById('e-recipe').value=(c.r||[]).join('\n');
+  document.getElementById('e-flavor').value=(c.fl||[]).join(', ');
+  document.getElementById('e-brand').value=c.brand||'';
+  document.getElementById('e-hist').value=c.hist||'';
+  document.getElementById('e-note').value=c.n||'';
+  document.getElementById('e-done').checked=!!c.done;
+  document.getElementById('ebg').classList.add('open');
+}
+function closeEdit(){document.getElementById('ebg').classList.remove('open');}
+function tryCloseE(e){if(e.target===document.getElementById('ebg'))closeEdit();}
+function saveEdit(){
+  if(!curId)return;
+  var p={
+    en:document.getElementById('e-en').value.trim(),
+    zh:document.getElementById('e-zh').value.trim(),
+    f:document.getElementById('e-fam').value,
+    m:document.getElementById('e-meth').value,
+    g:document.getElementById('e-glass').value.trim(),
+    s:document.getElementById('e-spirit').value.split(',').map(function(x){return x.trim();}).filter(Boolean),
+    r:document.getElementById('e-recipe').value.split('\n').map(function(x){return x.trim();}).filter(Boolean),
+    fl:document.getElementById('e-flavor').value.split(',').map(function(x){return x.trim();}).filter(Boolean),
+    brand:document.getElementById('e-brand').value.trim(),
+    hist:document.getElementById('e-hist').value.trim(),
+    n:document.getElementById('e-note').value.trim(),
+    done:document.getElementById('e-done').checked
+  };
+  if(!p.en){showToast('⚠️ 英文名稱不能為空');return;}
+  ST.overrides[curId]=p;saveState();
+  ALL=buildAll();doFilter();updateHeader();
+  closeEdit();openModal(curId);
+  showToast('✓ 已儲存');
+}
+
+// ── DELETE ──
+function confirmDelete(){
+  var c=getC(curId);if(!c)return;
+  document.getElementById('cdesc').textContent='確定刪除「'+c.en+'」？';
+  document.getElementById('cbg').classList.add('open');
+}
+function doDelete(){
+  if(!curId)return;
+  ST.deleted.push(curId);saveState();
+  ALL=buildAll();doFilter();updateHeader();
+  document.getElementById('cbg').classList.remove('open');
+  closeModal();showToast('已刪除');
+}
+
+// ── ADD ──
+function addCustom(){
+  var en=document.getElementById('a-en').value.trim();
+  if(!en){showToast('⚠️ 請輸入英文名稱');return;}
+  var c={
+    en:en,zh:document.getElementById('a-zh').value.trim()||en,
+    f:document.getElementById('a-fam').value,m:document.getElementById('a-meth').value,
+    g:document.getElementById('a-glass').value.trim()||'—',
+    s:document.getElementById('a-spirit').value.split(',').map(function(x){return x.trim();}).filter(Boolean),
+    r:document.getElementById('a-recipe').value.split('\n').map(function(x){return x.trim();}).filter(Boolean),
+    fl:document.getElementById('a-flavor').value.split(',').map(function(x){return x.trim();}).filter(Boolean),
+    brand:document.getElementById('a-brand').value.trim(),
+    hist:document.getElementById('a-hist').value.trim(),
+    n:document.getElementById('a-note').value.trim(),
+    done:document.getElementById('a-done').checked
+  };
+  ST.custom.push(c);saveState();
+  ALL=buildAll();doFilter();updateHeader();
+  ['a-en','a-zh','a-glass','a-spirit','a-recipe','a-flavor','a-brand','a-hist','a-note'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('a-done').checked=false;
+  showToast('✓ 已加入：'+en);
+  switchTab('l');
+}
+
+// ── FLASH ──
+function renderFlash(){
+  if(!fList.length){
+    document.getElementById('fen-f').textContent='—';
+    document.getElementById('fzh-f').textContent='沒有符合的酒款';
+    document.getElementById('fans').style.display='none';
+    document.getElementById('ftap').style.display='block';
+    return;
+  }
+  var c=fList[fIdx],fm=FC[c.f]||FC.CU;
+  document.getElementById('fprog').textContent=(fIdx+1)+' / '+fList.length;
+  document.getElementById('fen-f').textContent=c.en;
+  document.getElementById('fen-f').style.color=fm.c;
+  document.getElementById('fzh-f').textContent=c.zh;
+  document.getElementById('fans').style.display='none';
+  document.getElementById('ftap').style.display='block';
+  fShown=false;
+}
+function revealCard(){
+  if(fShown||!fList.length)return;
+  var c=fList[fIdx];
+  document.getElementById('fans').innerHTML=
+    '<div class="frow"><span class="flbl">原型</span><span class="fval">'+(FC[c.f]||FC.CU).l+'</span></div>'+
+    '<div class="frow"><span class="flbl">技法</span><span class="fval">'+c.m+' → '+c.g+'</span></div>'+
+    '<div class="frow"><span class="flbl">基酒</span><span class="fval">'+(c.s||[]).join(', ')+'</span></div>'+
+    '<div class="frow"><span class="flbl">配方</span><span class="fval">'+(c.r||[]).join(' / ')+'</span></div>'+
+    '<div class="frow"><span class="flbl">風味</span><span class="fval">'+(c.fl||[]).join(' · ')+'</span></div>'+
+    (c.brand?'<div class="frow"><span class="flbl">廠牌</span><span class="fval" style="color:#9ed4c4">'+c.brand.substring(0,80)+(c.brand.length>80?'…':'')+'</span></div>':'')+
+    (c.n?'<div class="frow"><span class="flbl">筆記</span><span class="fval" style="color:#7a7068">'+c.n.substring(0,80)+(c.n.length>80?'…':'')+'</span></div>':'');
+  document.getElementById('fans').style.display='block';
+  document.getElementById('ftap').style.display='none';
+  fShown=true;
+}
+function flashNext(){fIdx=(fIdx+1)%fList.length;renderFlash();}
+function flashPrev(){fIdx=(fIdx-1+fList.length)%fList.length;renderFlash();}
+function flashShuffle(){
+  for(var i=fList.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=fList[i];fList[i]=fList[j];fList[j]=t;}
+  fIdx=0;renderFlash();
+}
+
+// ── TABS ──
+function switchTab(t){
+  ['l','f','a'].forEach(function(x){
+    document.getElementById('tab-'+x).classList.toggle('active',x===t);
+    document.getElementById(x+'view').style.display=x===t?'block':'none';
+  });
+  if(t==='f'){fList=filtered.slice();fIdx=0;renderFlash();}
+}
+
+// ── TOAST ──
+function showToast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show');},2200);
+}
+
+// ── INIT ──
+updateHeader();doFilter();renderFlash();
+</script>
+</body>
+</html>
